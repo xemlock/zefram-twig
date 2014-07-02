@@ -1,4 +1,11 @@
 {
+    "name": "Zefram_Twig",
+    "description": "Twig binding for Zefram / Zend Framework",
+    "autoload": {
+        "psr-0": {
+            "Zefram_Twig_": "library/Zefram/Twig"
+        }
+    },
     "require": {
         "twig/twig": "1.*",
         "alb/zwig": "1.0.2"
