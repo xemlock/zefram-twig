@@ -15,8 +15,10 @@ class Zefram_Twig_Function_ViewHelper extends Zwig_Function_ViewHelper
      */
     public function __construct($name, $helper, $safe = null)
     {
-        if (!is_object($helper) || !method_exists($helper, $name)) {
-            throw new InvalidArgumentException('The object provided cannot be used as a view helper');
+        if (!$helper instanceof Zend_View_Interface) {
+            if (!method_exists($helper, $name)) {
+                throw new InvalidArgumentException('View helper must implement Zend_View_Interface or have a method matching the name provided');
+            }
         }
 
         $this->name = $name;
