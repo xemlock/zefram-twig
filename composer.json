@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-0": {
-            "Zefram_Twig_": "library/Zefram/Twig"
+            "Zefram_Twig": "library/"
         }
     },
     "require": {
