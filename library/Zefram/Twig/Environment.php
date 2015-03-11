@@ -7,6 +7,13 @@ class Zefram_Twig_Environment extends Zwig_Environment
      */
     protected $viewHelpers = array();
 
+    /**
+     * Constructor.
+     *
+     * @param  Zwig_View $view,
+     * @param  Twig_LoaderInterface $loader OPTIONAL
+     * @param  array $options OPTIONAL
+     */
     public function __construct(Zwig_View $view, Twig_LoaderInterface $loader = null, array $options = array())
     {
         parent::__construct($view, $loader, $options);
@@ -18,20 +25,32 @@ class Zefram_Twig_Environment extends Zwig_Environment
                 $this->viewHelpers[$name] = empty($safe) ? array() : $safe;
             }
         }
+
+        // add view helper getter function
+        $this->addFunction(new Twig_SimpleFunction('helper', array($this, 'getHelper')));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Additionally, if a function does not exist, but its name matches a view
+     * helper, a function corresponding to this helper is added to the
+     * environment and returned as a result.
+     *
+     * @param  string $name function name
+     * @return Twig_Function|false a Twig_Function instance or false if the function does not exist
+     */
     public function getFunction($name)
     {
         // When loading function do not user Zwig_Enviroment::getFunction() as
         // it is incompatibile with extension initialization check introduced
         // to Twig_Environment::getFunction() in commit 44873875ff 
         // (Nov 30, 2012).
-        if (false !== $function = Twig_Environment::getFunction($name)) {
+        if (false !== ($function = Twig_Environment::getFunction($name))) {
             return $function;
         }
 
-        $helper = $this->view->getHelper($name);
-        if (null === $helper) {
+        if (false === ($helper = $this->getHelper($name))) {
             return false;
         }
 
@@ -55,5 +74,21 @@ class Zefram_Twig_Environment extends Zwig_Environment
         $this->extensionInitialized = $initialized;
 
         return $function;
+    }
+
+    /**
+     * Get a view helper by name.
+     *
+     * @param  string $name helper name
+     * @return object|false a view helper instance or false if helper does not exist
+     */
+    public function getHelper($name)
+    {
+        try {
+            $helper = $this->view->getHelper($name);
+        } catch (Zend_Loader_PluginLoader_Exception $e) {
+            return false;
+        }
+        return $helper;
     }
 }
