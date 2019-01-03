@@ -60,4 +60,18 @@ class Zefram_Twig_View extends Zwig_View
         }
         return false;
     }
+
+    public function _run()
+    {
+        // Override Zwig_View::_run() because Twig_Loader_Filesystem requires all
+        // paths to exist, whereas Zend_View_Abstract does not. Before passing paths
+        // to Twig loader filter out non-existent directories.
+        $script = func_get_arg(0);
+        if (!$this->_pathSet && method_exists($this->_zwig->getLoader(), 'setPaths')) {
+            $this->_zwig->getLoader()->setPaths(array_filter($this->getScriptPaths(), 'file_exists'));
+            $this->_pathSet = true;
+        }
+        $template = $this->_zwig->loadTemplate($script);
+        $template->display(get_object_vars($this));
+    }
 }
