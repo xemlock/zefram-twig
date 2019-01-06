@@ -36,6 +36,7 @@ class Zefram_Twig_View extends Zwig_View
         }
 
         $this->setEngine($twig);
+        $this->_registerInContainer($twig);
 
         // Zend_View_Abstract constructor sucks a little, due to how the support
         // for different view engines is done. Initial variable assignment based
@@ -43,6 +44,24 @@ class Zefram_Twig_View extends Zwig_View
         // initialization is expected to take place.
 
         parent::__construct($config);
+    }
+
+    /**
+     * Registers Twig under Twig_Environment in the front controller's bootstrap.
+     *
+     * @param Twig_Environment $twig
+     */
+    protected function _registerInContainer(Twig_Environment $twig)
+    {
+        /** @var Zend_Application_Bootstrap_BootstrapAbstract $bootstrap */
+        $bootstrap = Zend_Controller_Front::getInstance()->getParam('bootstrap');
+        if (!$bootstrap instanceof Zend_Application_Bootstrap_BootstrapAbstract ||
+            $bootstrap->hasResource('Twig_Environment')
+        ) {
+            return;
+        }
+
+        $bootstrap->getContainer()->Twig_Environment = $twig;
     }
 
     /**

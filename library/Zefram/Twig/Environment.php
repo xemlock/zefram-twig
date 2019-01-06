@@ -5,7 +5,11 @@ class Zefram_Twig_Environment extends Zwig_Environment
     /**
      * @var array
      */
-    protected $viewHelpers = array();
+    protected $viewHelpers = array(
+        'Zefram_View_Helper_RenderScript' => 'html',
+        'Zefram_View_Helper_Form'         => 'html',
+        'Zefram_View_Helper_FormElement'  => 'html',
+    );
 
     /**
      * Constructor.
