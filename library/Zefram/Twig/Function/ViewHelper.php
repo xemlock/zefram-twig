@@ -5,6 +5,15 @@ class Zefram_Twig_Function_ViewHelper extends Zwig_Function_ViewHelper
     /**
      * @var array
      */
+    protected $options = array(
+        'needs_environment' => false,
+        'needs_context' => false,
+        'callable' => null,
+    );
+
+    /**
+     * @var array
+     */
     protected $safe;
 
     /**
